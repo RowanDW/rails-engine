@@ -14,4 +14,19 @@ class Api::V1::ItemsController < ApplicationController
       render json: ItemSerializer.new(item).serializable_hash.to_json, status: :not_found
     end
   end
+
+  def create
+    item = Item.new(item_params)
+    if item.save
+      render json: ItemSerializer.new(item).serializable_hash.to_json, status: :created
+    else
+      render json: {status: :bad_request, code: 400, message: "Invalid Item inputs" }, status: :bad_request
+    end
+  end
+
+  private
+
+  def item_params
+    params.require(:item).permit(:name, :description, :unit_price, :merchant_id)
+  end
 end
