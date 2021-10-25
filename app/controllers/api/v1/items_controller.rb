@@ -1,8 +1,19 @@
 class Api::V1::ItemsController < ApplicationController
   include Pagination
+  #skip_before_action :item_exists, only: [:index, :create]
   def index
-    items = Item.limit(limit).offset(per_page)
-    render json: ItemSerializer.new(items).serializable_hash.to_json
+    if params[:merchant_id]
+      if Merchant.exists?(params[:merchant_id])
+        merchant = Merchant.find(params[:merchant_id])
+        items = merchant.items
+        render json: ItemSerializer.new(items).serializable_hash.to_json
+      else
+        render json: {status: :not_found, code: 404, message: "error" }, status: :not_found
+      end
+    else
+      items = Item.limit(limit).offset(per_page)
+      render json: ItemSerializer.new(items).serializable_hash.to_json
+    end
   end
 
   def show
@@ -46,6 +57,12 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   private
+
+  # def item_exists?
+  #   if !Item.exists?(params[:id])
+  #     render json: {status: :not_found, code: 404, message: "Item does not exist" }, status: :not_found
+  #   end
+  # end
 
   def item_params
     params.require(:item).permit(:name, :description, :unit_price, :merchant_id)
