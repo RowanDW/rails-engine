@@ -24,6 +24,19 @@ class Api::V1::ItemsController < ApplicationController
     end
   end
 
+  def update
+    if Item.exists?(params[:id])
+      item = Item.find(params[:id])
+      if item.update(item_params)
+        render json: ItemSerializer.new(item).serializable_hash.to_json
+      else
+        render json: {status: :bad_request, code: 400, message: "Invalid Item inputs" }, status: :bad_request
+      end
+    else
+      render json: {status: :not_found, code: 404, message: "Item does not exist" }, status: :not_found
+    end
+  end
+
   private
 
   def item_params
