@@ -1,5 +1,4 @@
 class Api::V1::Items::FindAllController < ApplicationController
-
   def index
     if valid_name_search?
       items = Item.search_by_name(params[:name])

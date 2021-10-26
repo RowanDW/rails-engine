@@ -1,5 +1,4 @@
 class Api::V1::MerchantController < ApplicationController
-
   def index
     if Item.exists?(params[:item_id])
       item = Item.find(params[:item_id])
