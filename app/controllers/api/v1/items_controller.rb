@@ -1,13 +1,14 @@
 class Api::V1::ItemsController < ApplicationController
   include Pagination
-  #skip_before_action :item_exists, only: [:index, :create]
+  before_action :item_exists, only: [:show, :update, :destroy]
+
   def index
     if params[:merchant_id]
       if Merchant.exists?(params[:merchant_id])
         merchant = Merchant.find(params[:merchant_id])
         render json: ItemSerializer.new(merchant.items).serializable_hash.to_json
       else
-        render json: {status: :not_found, code: 404, message: "error" }, status: :not_found
+        render json: { error: "error" }, status: :not_found
       end
     else
       items = Item.limit(limit).offset(per_page)
@@ -16,13 +17,8 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def show
-    if Item.exists?(params[:id])
-      item = Item.find(params[:id])
-      render json: ItemSerializer.new(item).serializable_hash.to_json
-    else
-      item = Item.new
-      render json: ItemSerializer.new(item).serializable_hash.to_json, status: :not_found
-    end
+    item = Item.find(params[:id])
+    render json: ItemSerializer.new(item).serializable_hash.to_json
   end
 
   def create
@@ -35,33 +31,26 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def update
-    if Item.exists?(params[:id])
-      item = Item.find(params[:id])
-      if item.update(item_params)
-        render json: ItemSerializer.new(item).serializable_hash.to_json
-      else
-        render json: {status: :bad_request, code: 400, message: "Invalid Item inputs" }, status: :bad_request
-      end
+    item = Item.find(params[:id])
+    if item.update(item_params)
+      render json: ItemSerializer.new(item).serializable_hash.to_json
     else
-      render json: {status: :not_found, code: 404, message: "Item does not exist" }, status: :not_found
+      render json: {status: :bad_request, code: 400, message: "Invalid Item inputs" }, status: :bad_request
     end
   end
 
   def destroy
-    if Item.exists?(params[:id])
-      Item.delete(params[:id])
-    else
-      render json: {status: :not_found, code: 404, message: "Item does not exist" }, status: :not_found
-    end
+    Item.destroy(params[:id])
+    Invoice.destroy_empties
   end
 
   private
 
-  # def item_exists?
-  #   if !Item.exists?(params[:id])
-  #     render json: {status: :not_found, code: 404, message: "Item does not exist" }, status: :not_found
-  #   end
-  # end
+  def item_exists
+    if !Item.exists?(params[:id])
+      render json: {status: :not_found, code: 404, message: "Item does not exist" }, status: :not_found
+    end
+  end
 
   def item_params
     params.require(:item).permit(:name, :description, :unit_price, :merchant_id)
