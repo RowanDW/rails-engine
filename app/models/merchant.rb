@@ -4,4 +4,8 @@ class Merchant < ApplicationRecord
   validates :name, presence: true
 
   enum status: [:disabled, :enabled]
+
+  def self.search_by_name(search_params)
+    where("name ILIKE ?", "%#{search_params}%").order(name: :asc)
+  end
 end
