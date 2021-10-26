@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Merchant items ednpoint' do
+RSpec.describe 'Merchant items endpoint' do
   it "sends a list of merchants items" do
     merchant1 = create(:merchant)
     merchant2 = create(:merchant)
@@ -40,5 +40,13 @@ RSpec.describe 'Merchant items ednpoint' do
       expect(attr).to have_key(:merchant_id)
       expect(attr[:merchant_id]).to be_an Integer
     end
+  end
+
+  it "returns an error given a bad merchant id" do
+    merchants = create_list(:merchant, 3)
+
+    get "/api/v1/merchants/4875875476867678/items"
+
+    expect(response).to have_http_status(:not_found)
   end
 end
