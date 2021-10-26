@@ -16,6 +16,10 @@ Rails.application.routes.draw do
       resources :merchants, only: :show do
         resources :items, only: :index
       end
+
+      resources :items, only: :show do
+        resources :merchant, only: :index
+      end
     end
   end
 end
