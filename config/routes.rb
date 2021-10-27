@@ -3,6 +3,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       namespace :merchants do
         resources :find, only: :index
+        resources :most_items, only: :index
       end
 
       namespace :items do
@@ -15,6 +16,10 @@ Rails.application.routes.draw do
 
       resources :items do
         resources :merchant, only: :index
+      end
+
+      namespace :revenue do
+        resources :merchants, only: :index
       end
     end
   end
