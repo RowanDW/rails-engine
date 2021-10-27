@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe "Merchants with most revenue endpoint" do
+describe "Merchants with most items sold endpoint" do
   before :each do
     @merch = create_list(:merchant, 7)
     item1 = create(:item, merchant: @merch[0])
@@ -36,37 +36,37 @@ describe "Merchants with most revenue endpoint" do
   end
 
   it "sends a list of merchants" do
-    get "/api/v1/revenue/merchants", params: {quantity: 5}
+    get "/api/v1/merchants/most_items", params: {quantity: 5}
 
     expect(response).to be_successful
 
     merchants = JSON.parse(response.body, symbolize_names: true)
 
     expect(merchants[:data].count).to eq(5)
-    expect(merchants[:data][0][:id].to_i).to eq(@merch[3].id)
-    expect(merchants[:data][0][:attributes][:revenue]).to eq(8000.0)
+    expect(merchants[:data][0][:id].to_i).to eq(@merch[0].id)
+    expect(merchants[:data][0][:attributes][:count]).to eq(4)
 
-    expect(merchants[:data][1][:id].to_i).to eq(@merch[5].id)
-    expect(merchants[:data][1][:attributes][:revenue]).to eq(7000.0)
+    expect(merchants[:data][1][:id].to_i).to eq(@merch[3].id)
+    expect(merchants[:data][1][:attributes][:count]).to eq(3)
 
-    expect(merchants[:data][2][:id].to_i).to eq(@merch[0].id)
-    expect(merchants[:data][2][:attributes][:revenue]).to eq(5000.0)
+    expect(merchants[:data][2][:id].to_i).to eq(@merch[2].id)
+    expect(merchants[:data][2][:attributes][:count]).to eq(2)
 
-    expect(merchants[:data][3][:id].to_i).to eq(@merch[2].id)
-    expect(merchants[:data][3][:attributes][:revenue]).to eq(4000.0)
+    expect(merchants[:data][3][:id].to_i).to eq(@merch[4].id)
+    expect(merchants[:data][3][:attributes][:count]).to eq(2)
 
-    expect(merchants[:data][4][:id].to_i).to eq(@merch[4].id)
-    expect(merchants[:data][4][:attributes][:revenue]).to eq(3000.0)
+    expect(merchants[:data][4][:id].to_i).to eq(@merch[5].id)
+    expect(merchants[:data][4][:attributes][:count]).to eq(2)
   end
 
   it "returns an error if no quantity is given" do
-    get "/api/v1/revenue/merchants", params: {quantity: "abc"}
+    get "/api/v1/merchants/most_items", params: {quantity: "abc"}
     expect(response).to have_http_status(:bad_request)
 
-    get "/api/v1/revenue/merchants", params: {quantity: 0}
+    get "/api/v1/merchants/most_items"
     expect(response).to have_http_status(:bad_request)
 
-    get "/api/v1/revenue/merchants"
+    get "/api/v1/merchants/most_items", params: {quantity: 0}
     expect(response).to have_http_status(:bad_request)
   end
 end
