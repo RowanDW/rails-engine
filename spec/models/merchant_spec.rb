@@ -69,9 +69,32 @@ RSpec.describe Merchant do
     describe '#most_items' do
       it "returns x top merchants by items sold" do
         result = Merchant.most_items(5)
-  
+
         expect(result).to eq([@merch[0], @merch[3], @merch[2], @merch[4], @merch[5]])
       end
+    end
+  end
+
+  describe 'instance methods' do
+    before :each do
+      @merch = create(:merchant)
+      item = create(:item, merchant: @merch)
+      invoice1 = create(:invoice)
+      invoice2 = create(:invoice)
+      invoice3 = create(:invoice, status: "packaged")
+
+      ii1 = create(:invoice_item, item: item, invoice: invoice1, unit_price: 100, quantity: 2)
+      ii2 = create(:invoice_item, item: item, invoice: invoice2, unit_price: 100, quantity: 2)
+      ii3 = create(:invoice_item, item: item, invoice: invoice3, unit_price: 100, quantity: 2)
+
+      trans1 = create(:transaction, invoice: invoice1)
+      trans2 = create(:failed_transaction, invoice: invoice2)
+      trans3 = create(:transaction, invoice: invoice3)
+    end
+
+    it "total_revenue" do
+      rev = Merchant.total_revenue(@merch.id)
+      expect(rev[0].revenue).to eq(200)
     end
   end
 end
