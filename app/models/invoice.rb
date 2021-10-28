@@ -7,8 +7,6 @@ class Invoice < ApplicationRecord
 
   validates :customer_id, :merchant_id, :created_at, :updated_at, presence: true
 
-  enum status: [:shipped]
-  
   def self.destroy_empties
     invoices = Invoice.left_outer_joins(:invoice_items).where(invoice_items: {id: nil})
     invoices.destroy_all
