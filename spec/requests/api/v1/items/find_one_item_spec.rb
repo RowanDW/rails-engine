@@ -9,62 +9,58 @@ RSpec.describe 'Items find all endpoint' do
   end
 
   it "finds all Items based on name search" do
-    get "/api/v1/items/find_all", params: {name: "Book"}
+    get "/api/v1/items/find", params: {name: "Book"}
 
     expect(response).to be_successful
 
     items = JSON.parse(response.body, symbolize_names: true)
 
-    expect(items[:data].count).to eq(3)
-    expect(items[:data].first[:attributes][:name]).to eq("Cat Book")
+    expect(items[:data][:attributes][:name]).to eq("Cat Book")
   end
 
   it "finds all items by price" do
-    get "/api/v1/items/find_all", params: {max_price: 3}
+    get "/api/v1/items/find", params: {max_price: 3}
     expect(response).to be_successful
     items = JSON.parse(response.body, symbolize_names: true)
 
-    expect(items[:data].count).to eq(2)
-    expect(items[:data].first[:attributes][:name]).to eq("Cat Book")
+    expect(items[:data][:attributes][:name]).to eq("Cat Book")
 
-    get "/api/v1/items/find_all", params: {min_price: 3}
+    get "/api/v1/items/find", params: {min_price: 3}
     expect(response).to be_successful
     items = JSON.parse(response.body, symbolize_names: true)
 
-    expect(items[:data].count).to eq(3)
-    expect(items[:data].first[:attributes][:name]).to eq("Cat Book")
 
-    get "/api/v1/items/find_all", params: {min_price: 1, max_price: 3}
+    expect(items[:data][:attributes][:name]).to eq("Cat Book")
+
+    get "/api/v1/items/find", params: {min_price: 1, max_price: 3}
     expect(response).to be_successful
     items = JSON.parse(response.body, symbolize_names: true)
 
-    expect(items[:data].count).to eq(2)
-    expect(items[:data].first[:attributes][:name]).to eq("Cat Book")
+    expect(items[:data][:attributes][:name]).to eq("Cat Book")
   end
 
   it "returns an error if price and name params given" do
-    get "/api/v1/items/find_all", params: {max_price: 3, name: "Book"}
+    get "/api/v1/items/find", params: {max_price: 3, name: "Book"}
     expect(response).to have_http_status(:bad_request)
   end
 
   it "returns an error given bad params" do
-    get "/api/v1/items/find_all"
+    get "/api/v1/items/find"
     expect(response).to have_http_status(:bad_request)
 
-    get "/api/v1/items/find_all", params: {name: ""}
+    get "/api/v1/items/find", params: {name: ""}
     expect(response).to have_http_status(:bad_request)
 
-    get "/api/v1/items/find_all", params: {min_price: 3, max_price: 1}
+    get "/api/v1/items/find", params: {min_price: 3, max_price: 1}
     expect(response).to have_http_status(:bad_request)
 
-    get "/api/v1/items/find_all", params: {min_price: -4, max_price: -1}
+    get "/api/v1/items/find", params: {min_price: -4, max_price: -1}
     expect(response).to have_http_status(:bad_request)
 
-    get "/api/v1/items/find_all", params: {min_price: -4}
+    get "/api/v1/items/find", params: {min_price: -4}
     expect(response).to have_http_status(:bad_request)
 
-    get "/api/v1/items/find_all", params: {max_price: -4}
+    get "/api/v1/items/find", params: {max_price: -4}
     expect(response).to have_http_status(:bad_request)
-
   end
 end

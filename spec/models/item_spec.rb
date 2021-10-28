@@ -37,12 +37,10 @@ RSpec.describe Item do
         expect(items.count).to eq(2)
         expect(items.first.name).to eq("Cat Book")
 
-        items = Item.search_by_price(4)
+        items = Item.search_by_price(4, 20)
 
         expect(items.count).to eq(2)
         expect(items.first.name).to eq("Dictionary")
-
-        items = Item.search_by_price(4)
       end
     end
   end

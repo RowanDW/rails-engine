@@ -10,7 +10,7 @@ class Item < ApplicationRecord
     where("name ILIKE ?", "%#{search_params}%").order(name: :asc)
   end
 
-  def self.search_by_price(min = 0, max = 0)
+  def self.search_by_price(min, max)
     if max == 0
       where("unit_price >= #{min}").order(:name)
     else
