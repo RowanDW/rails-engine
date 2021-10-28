@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe "Merchants with most revenue endpoint" do
+describe "Total revenue between dates endpoint" do
   before :each do
     invoice1 = create(:invoice, created_at: "2012-03-08")
     invoice2 = create(:invoice, created_at: "2012-03-09")
